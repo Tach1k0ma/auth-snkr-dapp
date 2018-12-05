@@ -1,4 +1,4 @@
-#AUTHSNKR
+# AUTHSNKR
 
 AUTHSNKR empowers sneaker manufacturers to combat counterfeits by providing trust, confidence, and transparency through an immutable digital sneaker registry to the marketplace and the sneaker resell community.
 
