@@ -1,17 +1,8 @@
-fix auctioning
+Auth-Snkr-DApp
 
-looks like tokens work for the most part I think
+AUTHSNKR empowers manufacturers to provide trust, confidence, and transparency by delivering an immutable digital sneaker registry to the marketplace and the sneaker resell community.
 
-if you run into bugs
-	
-	truffle migrate --reset
+AUTHSNKR allows buyers and sellers to track an immutable record across the value chain.
+Buyer can view the history along with images, etc. with trust and confidence. 
 
-	or create a new meta mask account and use that
-
-	or restart ganache
-
-ran this
-
-npm install -E openzeppelin-solidity
-
-
+Project Team: Reginald Strain, Avanika Krishnaswamy, Richard Kuo, Simon Nguyen, Edward Yu
