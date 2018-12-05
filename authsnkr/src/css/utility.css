@@ -1,0 +1,41 @@
+.top-margin-50 {
+	margin-top: 50px;
+}
+
+.bottom-margin-50 {
+	margin-bottom: 50px;
+}
+
+.bottom-margin-20 {
+	margin-bottom: 20px;
+}
+
+.left-margin-5 {
+	margin-left: 5px;
+}
+
+.right-margin-5 {
+	margin-right: 5px;
+}
+
+.width-225 {
+	width: 225px;
+}
+
+.hide {
+	display: none;
+}
+
+.dog-style {
+	width: 430px;
+	height: 350px;
+}
+
+.dog-style img {
+	width: 225px;
+	height: 150px;
+}
+
+.clear-float {
+	clear: both;
+}
