@@ -1,5 +1,3 @@
-Auth-Snkr-DApp
-
 AUTHSNKR empowers manufacturers to provide trust, confidence, and transparency by delivering an immutable digital sneaker registry to the marketplace and the sneaker resell community.
 
 AUTHSNKR allows buyers and sellers to track an immutable record across the value chain.
