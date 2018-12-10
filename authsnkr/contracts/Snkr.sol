@@ -35,7 +35,8 @@ contract Snkr is ERC721Token, Ownable{
         //     return doggs.length;
         // }
 
-    function mint(string _image_url, uint256 _sku, uint256 _upc, uint256 _sneaker_id) external onlyOwner{
+    function mint(string _image_url, uint256 _sku, uint256 _upc) external onlyOwner{
+        // we don't need to pass in sneaker_id as an argument to the mint function because of the line below:
         sneaker_id++;
 
         uint time_created = now;
