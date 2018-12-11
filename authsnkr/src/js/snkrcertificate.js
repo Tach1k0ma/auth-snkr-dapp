@@ -1,4 +1,7 @@
 // JS for snkrcertificate.html
+var $sku_INPUT = $('#sku');
+var $upc_INPUT = $('#upc');
+var $image_url_INPUT = $('#image_url');
 
 var $errors_DIV = $('#errors');
 var $dogs_DIV = $('#snkrs');
@@ -11,9 +14,6 @@ var $ownerAddress_SPAN = $('#odogTokens[i]wnerAddress');
 var $ownerSeesAdditionalInfo_DIV = $('#ownerSeesAdditionalInfo');
 var $yourAddress_SPAN = $('#yourAddress');
 var $yourETHAmount_SPAN = $('#yourETHAmount');
-var $sku_INPUT = $('#sku');
-var $upc_INPUT = $('#upc');
-var $image_url_INPUT = $('#image_url');
 
 var $tokenIdDog_INPUT = $('#tokenIdDog');
 var $priceOfDog_INPUT = $('#priceOfDog');
@@ -22,11 +22,11 @@ var dogListLen;
 var dogTokenIds = [];
 var dogTokens = [];
 
-/*  
+/*
     //https://etherconverter.online/
-    
-    1 ether equals 10^18 wei. 
-    
+
+    1 ether equals 10^18 wei.
+
     //https://github.com/ethereum/web3.js/blob/0.15.0/lib/utils/utils.js#L40
 
     var unitMap = {
@@ -74,7 +74,7 @@ function afterIdText(id){
     if (id == 2) text = 'nd';
     if (id == 3) text = 'rd';
     if (id > 3) text = 'th';
-    
+
     return text;
 }
 
@@ -182,17 +182,17 @@ App = {
 
         return App.initContract();
     },
-
     initContract: function() {
-        $.getJSON('Dog.json', function(data) {
+
+        $.getJSON('../build/contracts/Snkr.json', function(data) {
             // Get the necessary contract artifact file and instantiate it with truffle-contract.
-            var DogArtifact = data;
-            App.contracts.Dog = TruffleContract(DogArtifact);
+            var SneakerArtifact = data;
+            App.contracts.Snkr = TruffleContract(SneakerArtifact);
 
             // Set the provider for our contract.
-            App.contracts.Dog.setProvider(App.web3Provider);
+            App.contracts.Snkr.setProvider(App.web3Provider);
 
-            $.getJSON('Sale.json', function(data) {
+            $.getJSON('../build/contracts/Sale.json', function(data) {
                 // Get the necessary contract artifact file and instantiate it with truffle-contract.
                 var SaleArtifact = data;
                 App.contracts.Sale = TruffleContract(SaleArtifact);
@@ -206,10 +206,7 @@ App = {
         });
     },
     bindEvents: function() {
-        $(document).on('click', '#transferOwnership', App.transferOwnership);
-        $(document).on('click', '#mintDog', App.mintDog);
-        $(document).on('click', '#sellDog', App.sellDog);
-        $(document).on('click', '.buy', App.buyDog);
+        $(document).on('click', '#mintSneaker', App.mintSneaker);
 
         App.accountBalanceWatcher();
 
@@ -218,7 +215,7 @@ App = {
     grabState: function() {
         var DogInstance;
 
-        App.contracts.Dog.deployed().then(function(instance) {
+        App.contracts.Snkr.deployed().then(function(instance) {
             DogInstance = instance;
 
             return DogInstance.totalSupply.call();
@@ -270,7 +267,7 @@ App = {
             App.watchEvents();
 
         }).catch(function(err) {
-            debugger;
+
             $errors_DIV.prepend(err.message);
         });
     },
@@ -398,7 +395,7 @@ App = {
 
                     $dogBody.append($p);
                 }
-                
+
             }
 
         }).catch(function(err) {
@@ -456,7 +453,7 @@ App = {
                 return DogInstance.Transfer().watch(function(err, res){
                     if (err) console.log(err);
 
-                    //if _from is 0x00... then the mint function was called 
+                    //if _from is 0x00... then the mint function was called
                     //look at line 221 in ERC721BasicToken.sol
                     if (res.args._from == "0x0000000000000000000000000000000000000000"){
                         var owner = res.args._to;
@@ -487,7 +484,7 @@ App = {
                             debugger;
                             $errors_DIV.prepend(err.message);
                         });
-                    }                           
+                    }
                 });
 
             }).catch(function(err) {
@@ -517,21 +514,22 @@ App = {
             $errors_DIV.prepend(err.message);
         });
     },
-    mintDog: function(event) {
+    mintSneaker: function(event) {
         event.preventDefault();
-        
-        console.log($dog_image_url_INPUT.val(), $dog_name_INPUT.val(), $dog_age_INPUT.val());
 
-        App.contracts.Dog.deployed().then(function(instance) {
-            dogInstance = instance;
+        console.log($image_url_INPUT.val(), $upc_INPUT.val(),
+        $sku_INPUT.val());
 
-            return dogInstance.mint($dog_image_url_INPUT.val(), $dog_name_INPUT.val(), $dog_age_INPUT.val());
+        App.contracts.Snkr.deployed().then(function(instance) {
+            snkrInstance = instance;
+
+            return snkrInstance.mint($image_url_INPUT.val(), $sku_INPUT.val(), $upc_INPUT.val());
         }).then(function(result) {
             alert('Minting Successful!');
         }).catch(function(err) {
             console.log(err.message);
         });
-        
+
     },
     sellDog: function(event){
         event.preventDefault();
