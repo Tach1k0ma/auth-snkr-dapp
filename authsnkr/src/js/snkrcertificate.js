@@ -7,6 +7,10 @@ var snkrTokenIds = [];
 var snkrTokens = [];
 var $snkrs_DIV = $('#snkrs');
 var $errors_DIV = $('#errors');
+var $name_SPAN = $('#name');
+var $symbol_SPAN = $('#symbol');
+var $ownerAddress_SPAN = $('#address_owner');
+var $ownerSees_DIV = $('#ownerSees');
 
 function snkrImgGen(image_url){
     var img = $('<img>');
@@ -14,6 +18,57 @@ function snkrImgGen(image_url){
     img.addClass('imageTag mt-3');
     return img;
 }
+
+function addSneakersToPage(list, $id){
+    $id.empty();
+    var $snkrDiv;
+    debugger;
+    for (var i=0; i<list.length; i++){
+    
+        $snkrDiv = createSneakerDiv(list[i][0], list[i][1]["c"][0], list[i][3]["c"][0], list[i][4]["c"][0]);
+        $id.append($snkrDiv);
+    }
+    
+}
+
+function afterIdText(id){
+    var text;
+    if (id == 1) text = 'st';
+    if (id == 2) text = 'nd';
+    if (id == 3) text = 'rd';
+    if (id > 3) text = 'th';
+    
+    return text;
+}
+
+function createSneakerDiv(image, sku, upc, snkrId){
+    var $cardContainer;
+    var $cardBody;
+    var $h5SKU;
+    var $h5UPC;
+    var $p_snkr_id;
+
+    $cardContainer = $('<div>').attr('class', 'card float-left');
+
+    $cardBody = $('<div>').attr('class', 'card-body');
+
+    $snkrImg = snkrImgGen(image);
+
+    $h5SKU = $('<h5>').attr('class', 'card-title').text(`SKU: ${sku}`);
+    $h5UPC = $('<h5>').attr('class', 'card-title').text(`UPC: ${upc}`);
+
+
+    var aft_id_text = afterIdText(snkrId);
+
+    $p_snkr_id = $('<p>').attr('class', 'card-text').text(`This SNKR is the ${snkrId}${aft_id_text} SNKR that you have created.`);
+
+
+    $cardBody.append($snkrImg, $h5SKU, $h5UPC, $p_snkr_id);
+    $cardContainer.append($cardBody);
+    $cardContainer.attr('data-snkrid', snkrId);
+}
+
+
 
 App = {
     web3Provider: null,
@@ -38,7 +93,7 @@ App = {
     },
     initContract: function() {
 
-        $.getJSON('../build/contracts/Snkr.json', function(data) {
+        $.getJSON('Snkr.json', function(data) {
             // Get the necessary contract artifact file and instantiate it with truffle-contract.
             var SneakerArtifact = data;
             App.contracts.Snkr = TruffleContract(SneakerArtifact);
@@ -46,7 +101,7 @@ App = {
             // Set the provider for our contract.
             App.contracts.Snkr.setProvider(App.web3Provider);
 
-            $.getJSON('../build/contracts/Sale.json', function(data) {
+            $.getJSON('Sale.json', function(data) {
                 // Get the necessary contract artifact file and instantiate it with truffle-contract.
                 var SaleArtifact = data;
                 App.contracts.Sale = TruffleContract(SaleArtifact);
@@ -68,6 +123,7 @@ App = {
 
         App.contracts.Snkr.deployed().then(function(instance) {
             snkrInstance = instance;
+            console.log("this is the snkrInstance", snkrInstance);
 
             return snkrInstance.totalSupply.call();
 
@@ -89,9 +145,11 @@ App = {
             //show the owner admin section if the person here is the owner
             if (web3.eth.accounts[0] == result[0]) $ownerSees_DIV.removeClass('hide');
 
-            $ownerAddress_SPAN.text(result[0]);
-            $name_SPAN.text(result[1]);
-            $symbol_SPAN.text(result[2]);
+            $ownerAddress_SPAN.text(`Owner of Contract: ${result[0]}`);
+            $name_SPAN.text(`Name of Token: ${result[1]}`);
+            $symbol_SPAN.text(`Token Symbol: ${result[2]}`);
+
+
 
             //update dogTokens globally
             snkrTokenIds = result.slice(3);
@@ -107,6 +165,7 @@ App = {
         }).then(function(result) {
 
             snkrTokens = result;
+            
 
             addSneakersToPage(snkrTokens, $snkrs_DIV);
 
@@ -117,13 +176,15 @@ App = {
     },
     mintSneaker: function(event) {
         event.preventDefault();
+        var snkrInstance;
 
         App.contracts.Snkr.deployed().then(function(instance) {
             snkrInstance = instance;
-
             return snkrInstance.mint($image_url_INPUT.val(), $sku_INPUT.val(), $upc_INPUT.val());
         }).then(function(result) {
           alert('Minting Successful!');
+          console.log(result);
+          
           $("#sneakerImage").append(snkrImgGen($image_url_INPUT.val()));
         }).catch(function(err) {
             console.log(err.message);
