@@ -14,7 +14,7 @@ contract Snkr is ERC721Token, Ownable{
 
     struct Sneaker {
         string image_url;
-        uint256 sku;
+        string sku;
         uint256 time_created;
         uint256 upc;
         uint256 sneaker_id;
@@ -35,7 +35,7 @@ contract Snkr is ERC721Token, Ownable{
         //     return doggs.length;
         // }
 
-    function mint(string _image_url, uint256 _sku, uint256 _upc) external onlyOwner{
+    function mint(string _image_url, string _sku, uint256 _upc) external onlyOwner{
         // we don't need to pass in sneaker_id as an argument to the mint function because of the line below:
         sneaker_id++;
 
