@@ -12,9 +12,6 @@
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "lite-server": "^2.3.0"
-  },
   "dependencies": {
     "zeppelin-solidity": "^1.9.0"
   }
