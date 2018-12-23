@@ -1,1 +1,4 @@
 /*CSS for transferownership.css*/
+#transfer-ownership-container {
+  display: flex;
+}
