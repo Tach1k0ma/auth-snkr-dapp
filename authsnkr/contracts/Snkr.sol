@@ -45,6 +45,8 @@ contract Snkr is ERC721Token, Ownable{
 
         sneaker_id_to_struct[sneaker_id] = sneaker;
 
+        sneaker_id_to_owners[sneaker_id] = [msg.sender];
+
         _mint(msg.sender, sneaker_id);
     }
 
