@@ -50,5 +50,14 @@ contract Snkr is ERC721Token, Ownable{
         _mint(msg.sender, sneaker_id);
     }
 
+    // when snkr token is transfered to new owner then the sneaker_id_to_owners mapping (the owner history of the snkr token) is updated
+    // function to be called when transferring the token
+    function updateTokenHistory(uint256 sneaker_id, address newOwner) external onlyOwner{
+        address[] tokenHistory;
+        tokenHistory = sneaker_id_to_owners[sneaker_id];
+        tokenHistory.push(newOwner);
+        sneaker_id_to_owners[sneaker_id] = tokenHistory;
+    }
+
 
 }
