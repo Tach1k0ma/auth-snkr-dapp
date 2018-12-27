@@ -22,7 +22,7 @@ function snkrImgGen(image_url){
 function addSneakersToPage(list, $id){
     $id.empty();
     var $snkrDiv;
-    debugger;
+   
     for (var i=list.length-1; i> -1; i--){
         $snkrDiv = createSneakerDiv(list[i][0], list[i][1], list[i][3]["c"][0], list[i][4]["c"][0]);
         $id.append($snkrDiv);
