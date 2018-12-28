@@ -59,5 +59,15 @@ contract Snkr is ERC721Token, Ownable{
         sneaker_id_to_owners[sneaker_id] = tokenHistory;
     }
 
+    function validate(address _currentOwnerAddress, uint sneaker_id_input) public view returns(bool) {
+        // use an interface to access other contracts
 
+        address[] owners = sneaker_id_to_owners[sneaker_id_input];
+        address actualCurrentOwner = owners[owners.length - 1];
+        bool results = _currentOwnerAddress == actualCurrentOwner;
+
+        // this also works
+        // bool results = bytes32(_currentOwnerAddress) == bytes32(actualCurrentOwner);
+        return results;
+    }
 }
