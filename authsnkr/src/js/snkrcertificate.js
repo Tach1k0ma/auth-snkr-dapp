@@ -22,10 +22,9 @@ function snkrImgGen(image_url){
 function addSneakersToPage(list, $id){
     $id.empty();
     var $snkrDiv;
-    
-    for (var i=0; i<list.length; i++){
-        $snkrDiv = createSneakerDiv(list[i][0], list[i][1]["c"][0], list[i][3]["c"][0], list[i][4]["c"][0]);
-        
+   
+    for (var i=list.length-1; i> -1; i--){
+        $snkrDiv = createSneakerDiv(list[i][0], list[i][1], list[i][3]["c"][0], list[i][4]["c"][0]);
         $id.append($snkrDiv);
     }
     
@@ -46,29 +45,43 @@ function createSneakerDiv(image, sku, upc, snkrId){
     var $cardBody;
     var $h5SKU;
     var $h5UPC;
-    var $p_snkr_id;
+    var $p_snkr_id_string;
+    var $h5_snkr_id_num;
 
-    $cardContainer = $('<div>').attr('class', 'card float-left');
+    $cardContainer = $('<div>').attr('class', 'card float-left justify-content-center text-center cardSNKR p-1');
 
     $cardBody = $('<div>').attr('class', 'card-body');
 
     $snkrImg = snkrImgGen(image);
 
-    $h5SKU = $('<h5>').attr('class', 'card-title').text(`SKU: ${sku}`);
+    $h5SKU = $('<h5>').attr('class', 'card-title mt-2').text(`SKU: ${sku}`);
     $h5UPC = $('<h5>').attr('class', 'card-title').text(`UPC: ${upc}`);
 
+    $p_snkr_id_num = $('<h5>').attr('class', 'card-text').text(`SNKR ID: ${snkrId}`);
 
     var aft_id_text = afterIdText(snkrId);
 
-    $p_snkr_id = $('<p>').attr('class', 'card-text').text(`This SNKR is the ${snkrId}${aft_id_text} SNKR that you have created.`);
+
+    // $p_snkr_id_string = $('<p>').attr('class', 'card-text text-left').text(`This is the ${snkrId}${aft_id_text} SNKR that you have created.`);
 
 
-    $cardBody.append($snkrImg, $h5SKU, $h5UPC, $p_snkr_id);
+    $cardBody.append($snkrImg, $h5SKU, $h5UPC, $p_snkr_id_num);
     $cardContainer.append($cardBody);
     $cardContainer.attr('data-snkrid', snkrId);
+    return $cardContainer;
 }
 
-
+$('#prev').on('click', function() {
+    $('#snkrs').animate({
+      scrollLeft: '-=320%'
+    }, 300, 'swing');
+  });
+  
+  $('#next').on('click', function() {
+    $('#snkrs').animate({
+      scrollLeft: '+=320%'
+    }, 300, 'swing');
+  });
 
 App = {
     web3Provider: null,
@@ -145,9 +158,9 @@ App = {
             //show the owner admin section if the person here is the owner
             if (web3.eth.accounts[0] == result[0]) $ownerSees_DIV.removeClass('hide');
 
-            $ownerAddress_SPAN.text(`Owner of Contract: ${result[0]}`);
-            $name_SPAN.text(`Name of Token: ${result[1]}`);
-            $symbol_SPAN.text(`Token Symbol: ${result[2]}`);
+            $ownerAddress_SPAN.text(result[0]);
+            $name_SPAN.text(result[1]);
+            $symbol_SPAN.text(result[2]);
 
 
 
@@ -168,6 +181,8 @@ App = {
             
 
             addSneakersToPage(snkrTokens, $snkrs_DIV);
+            $("#prev").html('<i class="fas fa-angle-left arrow"></i>');
+            $("#next").html('<i class="fas fa-angle-right arrow">');
 
         }).catch(function(err) {
 
@@ -182,10 +197,17 @@ App = {
             snkrInstance = instance;
             return snkrInstance.mint($image_url_INPUT.val(), $sku_INPUT.val(), $upc_INPUT.val());
         }).then(function(result) {
-          alert('Minting Successful!');
-          console.log(result);
-          
-          $("#sneakerImage").append(snkrImgGen($image_url_INPUT.val()));
+        //   alert('Minting Successful!');
+          App.grabState();
+          $("#newestToken").empty();
+          var newestSnkrID = result["logs"][0]["args"]["_tokenId"]["c"][0];
+          var newestSnkrDiv = createSneakerDiv($image_url_INPUT.val(), $sku_INPUT.val(), $upc_INPUT.val(), newestSnkrID);
+          var newestSnkrHeader = $('<h5>').text("Newest SNKR Token Created:").attr("class", "text-center");
+          $("#newestToken").append(newestSnkrHeader, newestSnkrDiv);
+          $image_url_INPUT.val("");
+          $sku_INPUT.val("");
+          $upc_INPUT.val("");
+        //   $("#sneakerImage").append(snkrImgGen($image_url_INPUT.val()));
         }).catch(function(err) {
             console.log(err.message);
         });

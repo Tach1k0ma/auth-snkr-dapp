@@ -1,5 +1,29 @@
 /*CSS for snkrcertificate.css*/
 
 .imageTag {
-  width: 300px;
+  width: 250px;
+  height: 200px;
+  object-fit: contain;
+
+}
+
+#mintSneaker{
+  width: fit-content;
+}
+
+.cardSNKR{
+  min-width: 300px;
+  min-height: fit-content;
+  margin: 10px;
+  box-shadow:0 2px 2px 0 rgba(0,0,0,0.16),0 2px 2px 0 rgba(0,0,0,0.12);
+}
+
+#snkrs{
+  overflow: hidden;
+  overflow-x: scroll;
+  margin-bottom: 30px;
+}
+
+.arrow {
+  font-size: 35px;
 }
