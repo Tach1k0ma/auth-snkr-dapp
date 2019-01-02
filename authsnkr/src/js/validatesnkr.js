@@ -170,24 +170,35 @@ App = {
     validateSneaker: function(event) {
         event.preventDefault();
         var snkrInstance;
+        var sneakerId = $sneakerIdInput.val()
+        var currentOwnerAddress = $currentOwnerAddressInput.val()
+
         App.contracts.Snkr.deployed().then(function(instance) {
             snkrInstance = instance;
-            console.log(snkrInstance);
-            console.log("snkrInstance.sneaker_id");
-            snkrInstance.sneaker_id().then(function(id) {
-                console.log(id)
-            });
+            // console.log(snkrInstance);
+            // console.log("snkrInstance.sneaker_id");
+            // snkrInstance.sneaker_id().then(function(id) {
+            //     console.log(id)
+            // });
 
-            return snkrInstance.validate($currentOwnerAddressInput.val(), $sneakerIdInput.val());
+            return snkrInstance.validate(currentOwnerAddress, sneakerId);
         }).then(function(result) {
-            console.log("result");
-            console.log(result);
+            var resultHTML
+            var resultDescription
 
-            var resultHTML;
-
-            $("#validationResults").append(resultHTML);
+            if(result) {
+                resultHTML = `<h3>Validation Result for sneaker ${sneakerId}: Valid</h3>`
+                resultDescription = `<p>This item is owned by: ${currentOwnerAddress}</p>`
+                $("#validationResults").attr('class', 'alert alert-success').html(resultHTML).append(resultDescription);
+            } else {
+                resultHTML = `<h3>Validation Result for sneaker ${sneakerId}: Not Valid</h3>`
+                resultDescription = `<p>This item is not owned by: ${currentOwnerAddress}</p>`
+                $("#validationResults").attr('class', 'alert alert-danger').html(resultHTML).append(resultDescription);
+            }
         }).catch(function(err) {
-            console.log(err.message);
+            resultHTML = `<h3>Validation Result for sneaker ${sneakerId}: Not Valid</h3>`
+            resultDescription = `<p>This item is not owned by: ${currentOwnerAddress}</p>`
+            $("#validationResults").attr('class', 'alert alert-danger').html(resultHTML).append(resultDescription);
         });
     },
     mintSneaker: function(event) {
