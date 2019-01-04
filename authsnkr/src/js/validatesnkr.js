@@ -30,8 +30,6 @@ function addSneakersToPage(list, $id){
     var $snkrDiv;
 
     for (var i=0; i<list.length; i++){
-        console.log(list)
-        console.log(list[i])
         $snkrDiv = createSneakerDiv(list[i][0], list[i][1]["c"][0], list[i][3]["c"][0], list[i][4]["c"][0], list[i][4]["c"][0]);
         $id.append($snkrDiv);
     }
@@ -183,22 +181,44 @@ App = {
 
             return snkrInstance.validate(currentOwnerAddress, sneakerId);
         }).then(function(result) {
+            App.getSneakerHistory(sneakerId)
+
             var resultHTML
             var resultDescription
 
             if(result) {
-                resultHTML = `<h3>Validation Result for sneaker ${sneakerId}: Valid</h3>`
-                resultDescription = `<p>This item is owned by: ${currentOwnerAddress}</p>`
+                resultHTML = `<center><h4>Validation Result for sneaker ${sneakerId}: Valid</h4></center>`
+                resultDescription = `<p>This item is currently owned by: <strong>${currentOwnerAddress}</strong></p>`
                 $("#validationResults").attr('class', 'alert alert-success').html(resultHTML).append(resultDescription);
             } else {
-                resultHTML = `<h3>Validation Result for sneaker ${sneakerId}: Not Valid</h3>`
+                resultHTML = `<center><h4>Validation Result for sneaker ${sneakerId}: Not Valid</h4></center>`
                 resultDescription = `<p>This item is not owned by: ${currentOwnerAddress}</p>`
                 $("#validationResults").attr('class', 'alert alert-danger').html(resultHTML).append(resultDescription);
             }
         }).catch(function(err) {
-            resultHTML = `<h3>Validation Result for sneaker ${sneakerId}: Not Valid</h3>`
+            resultHTML = `<center><h4>Validation Result for sneaker ${sneakerId}: Invalid</h4></center>`
             resultDescription = `<p>This item is not owned by: ${currentOwnerAddress}</p>`
             $("#validationResults").attr('class', 'alert alert-danger').html(resultHTML).append(resultDescription);
+        });
+    },
+    getSneakerHistory: function(sneakerId) {
+        App.contracts.Snkr.deployed().then(function(instance) {
+            instance.getPastOwnersLength(sneakerId).then(function(ownerLength) {
+                // let ownerArray = []
+
+                let pastOwnerList = `<h5>Past Owners (most recent first):</h5>`
+                $("#validationResults").append(pastOwnerList)
+
+                for(var i = ownerLength; i > -1; i--) {
+                    instance.getPastOwner(sneakerId, i).then(function(pastOwnerAddress) {
+                        // ownerArray.push(pastOwnerAddress)
+                        $("#validationResults").append(`<p>${pastOwnerAddress}</p>`)
+                    })
+                }
+            });
+        }).catch(function(err) {
+            pastOwnerList = `<p>There was an issue retrieving the ownership history</p>`
+            $("#validationResults").append(pastOwnerList)
         });
     },
     mintSneaker: function(event) {
