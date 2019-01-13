@@ -179,7 +179,6 @@ App = {
 
             snkrTokens = result;
             
-            debugger;
             addSneakersToPage(snkrTokens, $snkrs_DIV);
 
             // only include the left and right arrows when there are more than 3 SNKR tokens created 
