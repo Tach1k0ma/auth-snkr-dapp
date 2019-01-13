@@ -1,5 +1,4 @@
 var $snkrs_DIV = $('#transfer-ownership-container');
-var $transferToAddress_INPUT = $('#transferToAddress');
 var $ownerSeesAdditionalInfo_DIV = $('#ownerSeesAdditionalInfo');
 var $transactions_DIV = $('#transactions');
 var $errors_DIV = $('#errors');
@@ -29,13 +28,13 @@ function toggleSelect(sneakerId) {
     var selectedSneaker = $(`#card-${sneakerId}`)
 
     console.log(selectedSneaker)
-    // console.log(selectedSneaker.classList)
 
-    if (selectedSneaker.classList.contains('selected')) {
-        selectedSneaker.removeClass('selected')
-    } else {
+    // if (selectedSneaker.classList.contains('selected')) {
+    //     selectedSneaker.removeClass('selected')
+    // } else {
         selectedSneaker.addClass('selected')
-    }
+        $('#sneakerIdForTransfer').val(sneakerId)
+    // }
 }
 
 function createSneakerDiv(image, sku, upc, sneakerId){
@@ -316,8 +315,10 @@ App = {
             console.log(instance)
             SnkrInstance = instance;
 
-            var transferToAddress = $transferToAddress_INPUT.val();
-            return SnkrInstance.transferOwnership(transferToAddress);
+            var transferToAddress = $('#transferToAddress').val();
+            var sneakerIdForTransfer = $('#sneakerIdForTransfer').val();
+
+            return SnkrInstance.transferOwnership(sneakerIdForTransfer, transferToAddress);
         }).then(function(result) {
             console.log(result)
             addTransactionToDOM(result, $transactions_DIV);
