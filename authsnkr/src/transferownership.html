@@ -42,14 +42,21 @@
         </ul>
       </div>
     </nav>
-
   </div>
+
   <div class="container mt-5 pt-4">
+    <div id="transfer-ownership-container"></div>
 
-    <div id="transfer-ownership-container">
-
+    <div class="flex-row">
+      <p><input type="text" id="transferToAddress" placeholder="Address to transfer to" type="text"></p>
+      <button class="btn btn-primary" id="transferOwnership">Transfer Token Ownership</button>
     </div>
 
+    <div class="col-md-4" id="ownerSeesAdditionalInfo"></div>
+
+    <div class="row bottom-margin-50">
+      <div class="col-md-12" id="transactions"></div>
+    </div>
   </div>
 
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
