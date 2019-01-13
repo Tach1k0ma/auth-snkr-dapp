@@ -52,7 +52,7 @@ contract Snkr is ERC721Token, Ownable{
 
     // when snkr token is transfered to new owner then the sneaker_id_to_owners mapping (the owner history of the snkr token) is updated
     // function to be called when transferring the token
-    function updateTokenHistory(uint256 sneaker_id, address newOwner) external onlyOwner{
+    function updateTokenHistory(uint256 sneaker_id, address newOwner) internal onlyOwner{
         address[] tokenHistory;
         tokenHistory = sneaker_id_to_owners[sneaker_id];
         tokenHistory.push(newOwner);
@@ -81,5 +81,19 @@ contract Snkr is ERC721Token, Ownable{
         require(owner_id >= 0 && owner_id <= owners.length - 1, "Requested owner is invalid");
 
         return owners[owner_id];
+    }
+
+    function transferOwnership(uint _sneakerIdForTransfer, address _transferToAddress) public returns(bool) {
+        address[] owners = sneaker_id_to_owners[_sneakerIdForTransfer];
+        address actualCurrentOwner = owners[owners.length - 1];
+        require(msg.sender == actualCurrentOwner);
+
+        // function ownerOf(uint256 _tokenId) public view returns (address _owner);
+        require(ownerOf(_sneakerIdForTransfer) == msg.sender);
+
+        // function transferFrom(address _from, address _to, uint256 _tokenId) public;
+        transferFrom(msg.sender, _transferToAddress, _sneakerIdForTransfer);
+
+        updateTokenHistory(_sneakerIdForTransfer, _transferToAddress);
     }
 }
