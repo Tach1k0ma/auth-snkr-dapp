@@ -11,6 +11,11 @@
   width: fit-content;
 }
 
+#validateSneaker {
+  margin-top: 15pt;
+  width: fit-content;
+}
+
 .cardSNKR{
   min-width: 300px;
   min-height: fit-content;

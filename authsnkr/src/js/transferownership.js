@@ -1,6 +1,6 @@
 var $snkrs_DIV = $('#transfer-ownership-container');
 var $ownerSeesAdditionalInfo_DIV = $('#ownerSeesAdditionalInfo');
-var $transactions_DIV = $('#transactions');
+var $transferResults = $('#transferResults');
 var $errors_DIV = $('#errors');
 var $name_SPAN = $('#name');
 var $symbol_SPAN = $('#symbol');
@@ -26,15 +26,15 @@ function afterIdText(id){
 
 function toggleSelect(sneakerId) {
     var selectedSneaker = $(`#card-${sneakerId}`)
+    var classList = selectedSneaker.attr('class')
 
-    console.log(selectedSneaker)
-
-    // if (selectedSneaker.classList.contains('selected')) {
-    //     selectedSneaker.removeClass('selected')
-    // } else {
+    if (~classList.indexOf('selected')) {
+        selectedSneaker.removeClass('selected')
+        $('#sneakerIdForTransfer').val(null)
+    } else {
         selectedSneaker.addClass('selected')
         $('#sneakerIdForTransfer').val(sneakerId)
-    // }
+    }
 }
 
 function createSneakerDiv(image, sku, upc, sneakerId){
@@ -183,38 +183,14 @@ App = {
 
         }).then(function(result) {
             var snkrTokens = result;
-
+            console.log('adding sneakers to page')
             addSneakersToPage(snkrTokens, $snkrs_DIV);
-
         }).catch(function(err) {
 
             // $errors_DIV.prepend(err.message);
             console.log(err.message)
         });
     },
-    //-----------------------------------------------------------------------------------------
-    /*transferOwnership: function(event) {
-        event.preventDefault();
-
-        var SnkrInstance;
-
-        App.contracts.Snkr.deployed().then(function(instance) {
-            SnkrInstance = instance;
-
-            var tAddressVal = $transferToAddress_INPUT.val();
-
-            return SnkrInstance.transferOwnership(tAddressVal);
-        }).then(function(result) {
-          addTransactionToDOM(result, $transactions_DIV);
-
-          $ownerSeesAdditionalInfo_DIV.append($('<p>').text('ownership has been transferred to address provided.'));
-
-        }).catch(function(err) {
-            debugger;
-            $errors_DIV.prepend(err.message);
-        });
-    }*/
-    //---------------------------------------------------------------------------------------------
     watchEvents: function() {
         //we'll set up watching events here
         //watch for a new auction
@@ -222,8 +198,6 @@ App = {
 
         //watch for a solidity event
         App.contracts.Sale.deployed().then(function(instance) {
-            console.log('App.contracts.Sale.deployed().then(function(instance) {')
-            console.log(instance)
             SaleInstance = instance;
 
             return SaleInstance.NewAuction().watch(function(err, res){
@@ -242,12 +216,9 @@ App = {
 
         //watch for a solidity event
         App.contracts.Snkr.deployed().then(function(instance) {
-            console.log('App.contracts.Snkr.deployed().then(function(instance) {')
-            console.log(instance)
             SnkrInstance = instance;
 
             return SnkrInstance.OwnershipTransferred().watch(function(err, res){
-                console.log(res)
                 if (err) console.log(err);
                 console.log(res.args.newOwner, res.args.previousOwner);
                 $('#ownerAddress').text(res.args.newOwner);
@@ -292,6 +263,7 @@ App = {
                         $p = $('<p>').addClass('card-text');
                         $p.text(`owner: ${owner}`);
                         $snkrBody.append($p);
+                        console.log('appending')
 
                         $snkrs_DIV.append($newSnkrDiv);
                     }).catch(function(err) {
@@ -306,13 +278,11 @@ App = {
         });
     },
     transferOwnership: function(event) {
-        console.log('transferOwnership')
         event.preventDefault();
 
         var SnkrInstance;
 
         App.contracts.Snkr.deployed().then(function(instance) {
-            console.log(instance)
             SnkrInstance = instance;
 
             var transferToAddress = $('#transferToAddress').val();
@@ -320,15 +290,28 @@ App = {
 
             return SnkrInstance.transferOwnership(sneakerIdForTransfer, transferToAddress);
         }).then(function(result) {
-            console.log(result)
-            addTransactionToDOM(result, $transactions_DIV);
-            $ownerSeesAdditionalInfo_DIV.append($('<p>').text(`ownership of Token has been transferred to address: ${transferToAddress}`));
+            var resultHTML
+            var resultDescription
+            var transferToAddress = $('#transferToAddress').val();
+            var sneakerIdForTransfer = $('#sneakerIdForTransfer').val();
+
+            if(result) {
+                resultHTML = `<center><h4>Transfer for sneaker ${sneakerIdForTransfer} was Successful!</h4></center>`
+                resultDescription = `<p>This item is now owned by: <strong>${transferToAddress}</strong></p>`
+                $("#transferResults").attr('class', 'alert alert-success').html(resultHTML).append(resultDescription);
+            } else {
+                resultHTML = `<center><h4>Transfer for sneaker ${sneakerIdForTransfer} Failed</h4></center>`
+                $("#transferResults").attr('class', 'alert alert-danger').html(resultHTML).append(resultDescription);
+            }
         }).catch(function(err) {
-            debugger;
             $errors_DIV.prepend(err.message);
         });
     }
 };
+
+$('#myModal').on('shown.bs.modal', function () {
+  $('#myInput').trigger('focus')
+})
 
 $(function() {
     $(window).on('load', function() {
