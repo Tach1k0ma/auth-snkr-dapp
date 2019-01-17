@@ -179,10 +179,14 @@ App = {
 
             snkrTokens = result;
             
-
             addSneakersToPage(snkrTokens, $snkrs_DIV);
-            $("#prev").html('<i class="fas fa-angle-left arrow"></i>');
-            $("#next").html('<i class="fas fa-angle-right arrow">');
+
+            // only include the left and right arrows when there are more than 3 SNKR tokens created 
+            if(snkrTokens.length > 3){
+                $("#prev").html('<i class="fas fa-angle-left arrow"></i>');
+                $("#next").html('<i class="fas fa-angle-right arrow">');
+            }
+            
 
         }).catch(function(err) {
 
